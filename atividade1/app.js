@@ -64,7 +64,9 @@ app.get('/users/:userid', (req, res)=> {
 }) //users, dentro desta rota existe mais 0 rotas (folhas da árvore)
 
 
-
+app.get('/users', (req, res) => {
+    res.status(404).json('Página não encontrada');
+  });
 
 
 app.listen(port, () =>
