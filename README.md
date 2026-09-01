@@ -123,10 +123,65 @@ console.log(`Example app listening on port ${port}`)
 
 
 
+## 27/08/2026:
+
+
+### B+A = BA
+- npm init -y = package.json;
+- npm install express express-generator --view=ejs . = package.lockjson e nodemodules;
+- npx express-generator --view=ejs . = estrutura principal (de fato);
+- ^C = parar.
 
 
 
+### Rotas: 
+- Quanto mais rotas = maior arquivo JS;
+- Router = função do express “express.router()” instanciamento de um router;
+- Use: chama quem é executado e o local da execução;
+- Module.exports: fazer com que o Router seja visível ao JS;
+- res.render(‘’,{}): Renderizar um Template (modelo Index) -> Index está dentro de views e também é no formato JS; 
+- O diretório Views guarda os templates (telas?)
+- .get(): criador de rotas (recuperar dados de um servidor);
+- .post(): criador de rotas que recebe solicitações http do tipo POST (envio de dados para criar novos ou modificar recursos);
 
+### /Views:
+- EJS: semelhança de sintaxe do HTML;
+- path.join(_dirname, ‘’) = aponta para um diretório;
+- <% %> = tag de JS.
+
+### /Public: 
+- Tudo que eu quero que o usuário veja.
+
+
+
+### Stackblitz: 
+- Auxiliador de estrutura. 
+
+---
+
+
+
+## 01/09/2026
+
+### Template Engine:
+> Estrutura que adiciona HTML automaticamente de maneira que o html se adapta ao programa (requerimentos) isso que explica o "dinamicamente". >
+
+- Os templates estão sempre localizados em /views (diretório);
+- ejs, pug, handle...;
+- Rota e template são pares entre eles;
+
+### partials:
+> Aquilo que se repete nas páginas. >
+- Footer (rodapé), Header (cabeçalho) e Sidebar (barra lateral);
+- Tudo que se repete e/ou é reutilizável;
+
+- <%- include('{local-apontado}') %> = usar pedaços (header, footer e sidebar) e inserir no index.ejs;
+- Em caso de modificação do código, é necessário reiniciar o server (localhost) e  atualizar a página;
+- magic.ejs (template) quando criado também deve ser criado magic.js em routes, esse é apenas um exemplo de como funciona os pares;
+- module.exports = app; (no final do app.js);
+
+- Também é necessário alterar o app.js usando o Use, criando uma nova variável referente a rota+template e app.route;
+- mudar um arquivo isso se refere a todos os outros arquivos.
 
 
 
