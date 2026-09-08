@@ -274,6 +274,7 @@ console.log(`Example app listening on port ${port}`)
 - deleteMany;
 
 
-
+- atividade:
+[https://cloud.mongodb.com/v2/6aa0471158684d7d7e97d7aa#/explorer/6aa0481e182e2f9d0b0df832]
 
 
