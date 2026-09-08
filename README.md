@@ -183,8 +183,95 @@ console.log(`Example app listening on port ${port}`)
 - Também é necessário alterar o app.js usando o Use, criando uma nova variável referente a rota+template e app.route;
 - mudar um arquivo isso se refere a todos os outros arquivos.
 
+---
+
+## 08/09/2026:
+
+### NoSQL x SQL:
+#### SQL:
+>Banco de dados relacional.>
+- RDBMS;
+- Tabelas relacionais;
+
+  
+- Abstração de dados independente de implementação;
+- Armazenamento em disco;
+- Utilização de recursos otimizada;
+- Integridade, atomicidade, transação e durabilidade (garantia);
+
+- Necessidade de planejamento prévio, dificuldade em modificar;
+- Modelos rígidos;
+
+- Relacionamento bem definido entre os dados!.
 
 
+#### NoSQL:
+- Flexiblidade;
+- Alta escalabilidade:
+>Pontos de acesso que substituem falhas.>
+
+- "On the fly", modificar a aplicação sem parar de pré-visualizar;
+- Performance: simplicidade da implementação do NoSQL;
+
+- Confiabilidade dos dados não é tão robusta.
+
+- Se não precisar de relacionamentos -> NoSQL;
+- Trabalho com dados não estruturados (se guarda no json).
+
+
+### MongoDB:
+- open source, não relacional (NoSQL), usa-se json;
+
+#### Documento:
+>Documentos usam a mesma base do json. >
+- Coleção de documentos: varios documentos (json)
+- Flexibilidade;
+
+- Alta Escalabilidade
+> Escalabilidade: crescer facilmente;>
+
+#### Bson:
+>Binário através de json.>
+
+- Tipos aceitáveis:
+>Aceita qualquer coisa.>
+
+- _id:
+>Requisito principal.>
+
+#### CRUD:
+>Create, Read, Update, Delete.>
+
+- Create:
+>db.{collection}.{comando}{
+>conteúdo a se inserir>
+}>
+
+- insertOne: adicionar 1 documento;
+- insertMany: adicionar vários documentos;
+
+
+- Read:
+>Possui sustentação de portas lógicas.>
+>db.{collection}.{comando} {conteudo a se inserir}>
+
+- $gt = maior;
+- $lt = menor;
+
+- find({}) -> encontrar
+
+- Projection: campos que eu quero que sejam mostrados;
+- qty = quantidade
+
+
+- Update: atualizar
+>db.{collection}.{comando} {conteudo a se inserir}>
+
+- updateOne;
+- updateMany;
+- replaceOne;
+- deleteOne;
+- deleteMany;
 
 
 
