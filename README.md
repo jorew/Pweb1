@@ -277,4 +277,40 @@ console.log(`Example app listening on port ${port}`)
 - atividade:
 [https://cloud.mongodb.com/v2/6aa0471158684d7d7e97d7aa#/explorer/6aa0481e182e2f9d0b0df832]
 
+---
+
+## 10/09/2026:
+### MongoClient:
+#### Connection String
+>mongodb+srv://username:password...>
+>A connection string serve para conectar diferentes serviços>
+
+- poolsize: tamanho máximo de conexões -> consome memória;
+- w=majority: quando escrever na maioria dos clusters -> confirmação da escrita;
+
+- Cluster (revisão): conjunto de servidores;
+
+- comando: npm install mongodb;
+
+- findListings;
+
+- dotenv -> npm install dotenv = cria env;
+- .gitignore = .env e node_modules/;
+- require('dotenv').config() => cria variaveis.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
