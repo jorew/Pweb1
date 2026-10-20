@@ -301,7 +301,12 @@ console.log(`Example app listening on port ${port}`)
 
 Repositório: [https://github.com/pw1-repo]
 
+---
 
+## 20/10/2026:
+### API 
+> Objetivo da API, fazer público uma funcionalidade de um mecanismo externo dentro da sua aplicação.>
+- Endpoint: URL e URI do mecanismo externo a ser utilizado.
 
 
 
