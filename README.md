@@ -308,6 +308,52 @@ Repositório: [https://github.com/pw1-repo]
 > Objetivo da API, fazer público uma funcionalidade de um mecanismo externo dentro da sua aplicação.>
 - Endpoint: URL e URI do mecanismo externo a ser utilizado.
 
+--- 
+
+## 22/10/2026:
+### Consumindo APIs:
+- formato em json;
+- express NodeJS (o mais popular quando se fala de APIs);
+
+#### Requests
+> É muito popular, porém está obsoleto devido a falha de segurança.
+- Got;
+- Node fetch;
+- SuperAgent;
+- Axios (o mais popular).
+> Critério: segurança.
+
+
+
+#### Axios:
+- Promises:
+> Ações assincronas sejam escritas da melhor forma.
+
+> Estado pendente da promise: estado inicial;
+
+#### Comandos:
+- npm install axios;
+- placeholder;
+- "Content-type: application/x-www-form-urlencoded" (essencial).
+
+- Promises chains: 
+> Ações a serem realizadas por meio de funções e/ou parametros.
+
+- async e await:
+> try e catch, banco de dados.
+
+- axios config:
+> modelação de elementos dentro da estrutura, exemplo url e metodo.
+
+### Consumir:
+- criar rota com um campo; 
+- enviar via post para outra rota;
+- const api = {endpoint};
+- api rest: garçom de pedidos do usuário ao servidor.
+
+
+
+
 
 
 
