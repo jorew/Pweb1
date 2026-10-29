@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AstroView - NASA APOD & Image Library</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        space: {
+                            950: '#030712',
+                            900: '#0a0f1d',
+                            800: '#111827',
+                            700: '#1f293d',
+                            accent: '#6366f1',
+                            neon: '#a855f7'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #030712;
+            color: #f3f4f6;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Fundo Estrelado Animado */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            background: radial-gradient(ellipse at bottom, #0f172a 0%, #030712 100%);
+            overflow: hidden;
+        }
+
+        /* Efeito de Vidro (Glassmorphism) */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .glow-button {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .glow-button:hover {
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.7);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0f1d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+
+        /* Transições do Carrossel */
+        .carousel-slide {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Fundo Estrelado Dinâmico -->
+    <div id="starsContainer" class="stars-bg"></div>
+
+    <!-- Cabeçalho -->
+    <header class="w-full glass-card sticky top-0 z-50 border-b border-indigo-900/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-indigo-400">
+                    <i class="fa-solid fa-user-astronaut text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-orbitron font-extrabold text-xl sm:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-500">
+                        ASTRO<span class="text-white">VIEW</span>
+                    </h1>
+                    <p class="text-[10px] sm:text-xs text-indigo-300/70 font-mono tracking-widest">NASA PUBLIC DOMAIN EXPLORER</p>
+                </div>
+            </div>
+
+            <!-- Badge de Filtro Ativo -->
+            <div class="hidden sm:flex items-center space-x-2 bg-indigo-950/80 border border-emerald-500/30 px-3 py-1.5 rounded-full">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-xs font-mono text-emerald-300">Domínio Público Garantido</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow flex flex-col items-center">
+
+        <!-- Barra de Busca e Sugestões -->
+        <section class="w-full max-w-3xl mb-8 text-center space-y-4">
+            <div class="space-y-2">
+                <h2 class="text-2xl sm:text-4xl font-orbitron font-bold text-white tracking-wide">
+                    Explore o Universo Sem Direitos Autorais
+                </h2>
+                <p class="text-sm sm:text-base text-gray-400">
+                    Pesquise imagens de corpos celestes da coleção oficial da NASA filtradas para uso livre e domínio público.
+                </p>
+            </div>
+
+            <form id="searchForm" class="relative flex items-center w-full mt-4">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-400 text-lg"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Digite o nome de um astro (ex: Mars, Saturn, Nebula, Galaxy)..." 
+                        class="w-full pl-12 pr-28 py-4 bg-space-900/90 border border-indigo-500/40 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30 text-base shadow-inner transition duration-200"
+                        required
+                    />
+                    <button 
+                        type="submit" 
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium px-5 py-2.5 rounded-xl transition duration-200 glow-button flex items-center gap-2 text-sm"
+                    >
+                        <span>Buscar</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Atalhos de Busca Rápida -->
+            <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
+                <span class="text-xs text-gray-400 font-mono mr-1">Sugestões:</span>
+                <button onclick="quickSearch('Mars')" class="text-xs bg-space-800 hover:bg-indigo-900/60 border border-indigo-500/30 text-indigo-300 px-3 py-1 rounded-full transition">Marte 🔴</button>
+                <button onclick="quickSearch('Saturn')" class="text-xs bg-space-800 hover:bg-indigo-900/60 border border-indigo-500/30 text-indigo-300 px-3 py-1 rounded-full transition">Saturno 🪐</button>
+                <button onclick="quickSearch('Nebula')" class="text-xs bg-space-800 hover:bg-indigo-900/60 border border-indigo-500/30 text-indigo-300 px-3 py-1 rounded-full transition">Nebulosa 🌌</button>
+                <button onclick="quickSearch('Jupiter')" class="text-xs bg-space-800 hover:bg-indigo-900/60 border border-indigo-500/30 text-indigo-300 px-3 py-1 rounded-full transition">Júpiter 🟠</button>
+                <button onclick="quickSearch('Apollo')" class="text-xs bg-space-800 hover:bg-indigo-900/60 border border-indigo-500/30 text-indigo-300 px-3 py-1 rounded-full transition">Apollo 🚀</button>
+            </div>
+        </section>
+
+        <!-- Estado de Carregamento (Loading) -->
+        <section id="loadingState" class="hidden my-12 flex flex-col items-center justify-center space-y-4">
+            <div class="relative w-16 h-16">
+                <div class="absolute inset-0 rounded-full border-4 border-indigo-500/20"></div>
+                <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+            </div>
+            <p class="text-indigo-300 font-mono text-sm animate-pulse">Conectando às diretrizes da NASA & filtrando copyright...</p>
+        </section>
+
+        <!-- Estado Mensagem de Erro / Vazio -->
+        <section id="messageState" class="hidden w-full max-w-xl my-8 p-6 glass-card rounded-2xl text-center space-y-3">
+            <div id="messageIcon" class="text-4xl text-amber-400">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h3 id="messageTitle" class="text-lg font-orbitron font-bold text-white">Nenhum resultado encontrado</h3>
+            <p id="messageText" class="text-sm text-gray-400">Tente buscar por outro termo ou nome de astro em inglês.</p>
+        </section>
+
+        <!-- Seção do Carrossel -->
+        <section id="carouselSection" class="hidden w-full max-w-4xl space-y-4">
+            
+            <!-- Contador de Imagens e Termo Pesquisado -->
+            <div class="flex items-center justify-between text-xs sm:text-sm font-mono text-indigo-300 px-2">
+                <span>Resultados para: <strong id="searchTermLabel" class="text-white font-bold">"Mars"</strong></span>
+                <span id="counterLabel" class="bg-indigo-950/80 px-3 py-1 rounded-full border border-indigo-800/50">1 / 10</span>
+            </div>
+
+            <!-- Card Principal do Carrossel -->
+            <div class="glass-card rounded-3xl overflow-hidden relative group">
+                
+                <!-- Viewport da Imagem -->
+                <div id="carouselViewport" class="relative w-full h-[320px] sm:h-[480px] bg-black flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing">
+                    <img id="carouselImage" src="" alt="" class="w-full h-full object-contain transition-all duration-300" />
+                    
+                    <!-- Overlay Gradiente Suave -->
+                    <div class="absolute inset-0 pointer-events-none bg-gradient-to-t from-space-950 via-transparent to-transparent opacity-80"></div>
+                </div>
+
+                <!-- Botões de Navegação Anterior / Próximo -->
+                <button 
+                    id="prevBtn" 
+                    onclick="prevSlide()" 
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-space-900/80 hover:bg-indigo-600 border border-indigo-500/30 text-white flex items-center justify-center transition-all duration-200 z-10 focus:outline-none"
+                    title="Anterior"
+                >
+                    <i class="fa-solid fa-chevron-left text-lg"></i>
+                </button>
+                <button 
+                    id="nextBtn" 
+                    onclick="nextSlide()" 
+                    class="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-space-900/80 hover:bg-indigo-600 border border-indigo-500/30 text-white flex items-center justify-center transition-all duration-200 z-10 focus:outline-none"
+                    title="Próximo"
+                >
+                    <i class="fa-solid fa-chevron-right text-lg"></i>
+                </button>
+
+                <!-- Painel de Informações da Imagem -->
+                <div class="p-6 space-y-3 bg-space-900/90 border-t border-indigo-900/40 relative">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-800 pb-3">
+                        <h3 id="slideTitle" class="text-lg sm:text-xl font-orbitron font-bold text-white tracking-wide">
+                            Título da Imagem
+                        </h3>
+                        <div class="flex items-center space-x-3 text-xs font-mono text-gray-400">
+                            <span id="slideDate"><i class="fa-regular fa-calendar mr-1"></i>2026-01-01</span>
+                            <span class="text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2 py-0.5 rounded text-[10px]">Livre / Sem Copyright</span>
+                        </div>
+                    </div>
+
+                    <!-- Descrição Expansível -->
+                    <div class="relative">
+                        <p id="slideDescription" class="text-xs sm:text-sm text-gray-300 leading-relaxed max-h-24 overflow-y-auto pr-2">
+                            Descrição detalhada do astro ou missão espacial fornecida pela NASA.
+                        </p>
+                    </div>
+
+                    <!-- Botão de Download / Ver Imagem em Alta Resolução -->
+                    <div class="pt-2 flex justify-end">
+                        <a 
+                            id="downloadLink" 
+                            href="#" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-mono transition"
+                        >
+                            <span>Abrir imagem original (HD)</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Indicadores / Dots de Navegação -->
+                <div id="dotsContainer" class="flex items-center justify-center gap-2 py-3 bg-space-950 border-t border-indigo-950">
+                    <!-- Gerados Dinamicamente -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="w-full border-t border-indigo-900/30 glass-card mt-12 py-6 text-center text-xs text-gray-500">
+        <p>Dados fornecidos publicamente pela <strong class="text-gray-400">NASA Image and Video Library API</strong></p>
+        <p class="mt-1 font-mono text-[11px] text-gray-600">AstroView &copy; 2026 - Uso Livre e Educacional</p>
+    </footer>
+
+    <!-- Scripts JavaScript -->
+    <script>
+        // Configuração Inicial de Estados
+        let carouselData = [];
+        let currentIndex = 0;
+
+        // Elementos do DOM
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const loadingState = document.getElementById('loadingState');
+        const messageState = document.getElementById('messageState');
+        const messageTitle = document.getElementById('messageTitle');
+        const messageText = document.getElementById('messageText');
+        const messageIcon = document.getElementById('messageIcon');
+        const carouselSection = document.getElementById('carouselSection');
+
+        const carouselImage = document.getElementById('carouselImage');
+        const slideTitle = document.getElementById('slideTitle');
+        const slideDate = document.getElementById('slideDate');
+        const slideDescription = document.getElementById('slideDescription');
+        const downloadLink = document.getElementById('downloadLink');
+        const counterLabel = document.getElementById('counterLabel');
+        const searchTermLabel = document.getElementById('searchTermLabel');
+        const dotsContainer = document.getElementById('dotsContainer');
+
+        // Event Listener de Busca
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const term = searchInput.value.trim();
+            if (term) {
+                fetchNasaImages(term);
+            }
+        });
+
+        // Função de Busca Rápida via Botões Presets
+        function quickSearch(term) {
+            searchInput.value = term;
+            fetchNasaImages(term);
+        }
+
+        // Requisição para a API da NASA
+        async function fetchNasaImages(query) {
+            showLoading(true);
+            hideMessage();
+            carouselSection.classList.add('hidden');
+
+            const url = `https://images-api.nasa.gov/search?q=${encodeURIComponent(query)}&media_type=image`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Falha ao conectar com o serviço da NASA.');
+
+                const data = await response.json();
+                const items = data.collection.items || [];
+
+                // FILTRAGEM: Apenas itens SEM copyright/direitos reservados
+                carouselData = items.filter(item => {
+                    const itemData = item.data[0] || {};
+                    const hasCopyrightField = Boolean(itemData.copyright);
+                    const photographer = (itemData.photographer || '').toLowerCase();
+                    const secondaryCreator = (itemData.secondary_creator || '').toLowerCase();
+
+                    // Verifica se há indicações explícitas de copyright de terceiros
+                    const isProtected = hasCopyrightField || 
+                                        photographer.includes('copyright') || 
+                                        secondaryCreator.includes('copyright');
+
+                    return !isProtected;
+                }).map(item => {
+                    const info = item.data[0] || {};
+                    const links = item.links || [];
+                    const imageThumb = links.find(l => l.rel === 'preview')?.href || '';
+                    
+                    return {
+                        title: info.title || 'Sem título',
+                        description: info.description || info.description_508 || 'Nenhuma descrição disponível.',
+                        date: info.date_created ? info.date_created.split('T')[0] : 'Data desconhecida',
+                        imageUrl: imageThumb,
+                        nasaId: info.nasa_id
+                    };
+                }).filter(item => item.imageUrl !== '');
+
+                showLoading(false);
+
+                if (carouselData.length === 0) {
+                    showMessage(
+                        'Nenhuma imagem sem copyright encontrada',
+                        `Não foram encontradas imagens livres de direitos para o termo "${query}". Tente outro termo.`,
+                        '<i class="fa-solid fa-file-circle-exclamation"></i>'
+                    );
+                    return;
+                }
+
+                // Inicia o Carrossel com os Resultados
+                searchTermLabel.textContent = `"${query}"`;
+                currentIndex = 0;
+                renderCarousel();
+                carouselSection.classList.remove('hidden');
+
+            } catch (error) {
+                console.error(error);
+                showLoading(false);
+                showMessage(
+                    'Erro na busca',
+                    'Ocorreu um erro ao obter os dados da API da NASA. Tente novamente mais tarde.',
+                    '<i class="fa-solid fa-triangle-exclamation"></i>'
+                );
+            }
+        }
+
+        // Renderiza o Slide Atual do Carrossel
+        function renderCarousel() {
+            if (carouselData.length === 0) return;
+
+            const current = carouselData[currentIndex];
+
+            // Atualiza dados visuais
+            carouselImage.src = current.imageUrl;
+            carouselImage.alt = current.title;
+            slideTitle.textContent = current.title;
+            slideDate.innerHTML = `<i class="fa-regular fa-calendar mr-1"></i>${current.date}`;
+            slideDescription.textContent = current.description;
+            downloadLink.href = current.imageUrl;
+
+            // Atualiza contador
+            counterLabel.textContent = `${currentIndex + 1} / ${carouselData.length}`;
+
+            // Atualiza indicadores (Dots)
+            renderDots();
+        }
+
+        // Gera e atualiza os Pontos (Dots) de navegação
+        function renderDots() {
+            dotsContainer.innerHTML = '';
+            
+            // Exibe no máximo 12 dots para manter a estética
+            const maxDots = Math.min(carouselData.length, 12);
+            for (let i = 0; i < maxDots; i++) {
+                const dot = document.createElement('button');
+                dot.className = `w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    i === currentIndex ? 'bg-indigo-400 w-6' : 'bg-gray-600 hover:bg-gray-400'
+                }`;
+                dot.onclick = () => goToSlide(i);
+                dot.title = `Ir para slide ${i + 1}`;
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        // Navegação de Slides
+        function nextSlide() {
+            if (carouselData.length === 0) return;
+            currentIndex = (currentIndex + 1) % carouselData.length;
+            renderCarousel();
+        }
+
+        function prevSlide() {
+            if (carouselData.length === 0) return;
+            currentIndex = (currentIndex - 1 + carouselData.length) % carouselData.length;
+            renderCarousel();
+        }
+
+        function goToSlide(index) {
+            currentIndex = index;
+            renderCarousel();
+        }
+
+        // Suporte a Gestos Touch / Swipe
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const viewport = document.getElementById('carouselViewport');
+
+        viewport.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        viewport.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 40;
+            if (touchEndX < touchStartX - swipeThreshold) {
+                nextSlide();
+            }
+            if (touchEndX > touchStartX + swipeThreshold) {
+                prevSlide();
+            }
+        }
+
+        // Navegação por Teclado (Setas Esquerda e Direita)
+        document.addEventListener('keydown', (e) => {
+            if (carouselSection.classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Helpers de Interface
+        function showLoading(isLoading) {
+            if (isLoading) {
+                loadingState.classList.remove('hidden');
+            } else {
+                loadingState.classList.add('hidden');
+            }
+        }
+
+        function showMessage(title, text, iconHtml) {
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            if (iconHtml) messageIcon.innerHTML = iconHtml;
+            messageState.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            messageState.classList.add('hidden');
+        }
+
+        // Gerador de Estrelas de Fundo Animadas
+        function generateStars() {
+            const container = document.getElementById('starsContainer');
+            const starsCount = 70;
+
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                const size = Math.random() * 2 + 1;
+                const duration = Math.random() * 3 + 2;
+
+                star.style.position = 'absolute';
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.backgroundColor = '#ffffff';
+                star.style.borderRadius = '50%';
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.opacity = Math.random() * 0.7 + 0.3;
+                star.style.animation = `twinkle ${duration}s infinite ease-in-out`;
+
+                container.appendChild(star);
+            }
+        }
+
+        // Busca Inicial ao Carregar a Página
+        window.onload = function() {
+            generateStars();
+            // Busca inicial automática por Marte
+            fetchNasaImages('Mars');
+        };
+    </script>
+</body>
+</html>
